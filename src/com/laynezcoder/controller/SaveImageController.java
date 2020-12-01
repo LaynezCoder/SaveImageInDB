@@ -22,7 +22,12 @@ public class SaveImageController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         
-    }    
+    }   
+    
+    @FXML
+    private void handleOpenFileExplorer() {
+        openFileExplorer();
+    }
     
     private void openFileExplorer() {
         FileChooser fileChooser = new FileChooser();
