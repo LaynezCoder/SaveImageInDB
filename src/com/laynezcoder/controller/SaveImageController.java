@@ -37,9 +37,9 @@ public class SaveImageController implements Initializable {
         FileChooser.ExtensionFilter extFilterPNG = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.PNG");
         fileChooser.getExtensionFilters().addAll(extFilterJPG, extFilterPNG);
         
-        File selectedFile = fileChooser.showOpenDialog(getStage());
-        if (selectedFile != null) {
-            boolean result = insertNewImage(selectedFile);
+        File selectedImage = fileChooser.showOpenDialog(getStage());
+        if (selectedImage != null) {
+            boolean result = insertNewImage(selectedImage);
             if (result) {
                 System.out.println("Save Image");
             } else {
@@ -54,13 +54,13 @@ public class SaveImageController implements Initializable {
         return (Stage) btnOpenFileExplorer.getScene().getWindow();
     }  
     
-    private boolean insertNewImage(File selectedFile) {
+    private boolean insertNewImage(File selectedImage) {
         try {
-            FileInputStream file = new FileInputStream(selectedFile);
+            FileInputStream image = new FileInputStream(selectedImage);
             String sql = "INSERT INTO Images (nameImage, image) VALUES (?, ?)";
             PreparedStatement stmt = DatabaseConnection.getInstance().getConnection().prepareStatement(sql);
-            stmt.setString(1, selectedFile.getName());
-            stmt.setBlob(2, file);
+            stmt.setString(1, selectedImage.getName());
+            stmt.setBlob(2, image);
             stmt.execute();
             return true;
         } catch (SQLException | FileNotFoundException ex) {
