@@ -1,9 +1,12 @@
 package com.laynezcoder.controller;
 
-import java.awt.image.BufferedImage;
+import com.laynezcoder.database.DatabaseConnection;
 import java.io.File;
-import java.io.IOException;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.net.URL;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -12,7 +15,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javax.imageio.ImageIO;
 
 public class SaveImageController implements Initializable {
     
@@ -37,12 +39,11 @@ public class SaveImageController implements Initializable {
         
         File selectedFile = fileChooser.showOpenDialog(getStage());
         if (selectedFile != null) {
-            try {
-                BufferedImage bufferedImage = ImageIO.read(selectedFile);
-                
-                System.out.println("Buffered Image: " + bufferedImage.getWidth() + " " + bufferedImage.getHeight());
-            } catch (IOException ex) {
-                Logger.getLogger(SaveImageController.class.getName()).log(Level.SEVERE, null, ex);
+            boolean result = insertNewImage(selectedFile);
+            if (result) {
+                System.out.println("Save Image");
+            } else {
+                System.err.println("FATAL ERROR");
             }
         } else {
             System.out.println("file is not valid!");
@@ -52,4 +53,19 @@ public class SaveImageController implements Initializable {
     private Stage getStage() {
         return (Stage) btnOpenFileExplorer.getScene().getWindow();
     }  
+    
+    private boolean insertNewImage(File selectedFile) {
+        try {
+            FileInputStream file = new FileInputStream(selectedFile);
+            String sql = "INSERT INTO Images (nameImage, image) VALUES (?, ?)";
+            PreparedStatement stmt = DatabaseConnection.getInstance().getConnection().prepareStatement(sql);
+            stmt.setString(1, selectedFile.getName());
+            stmt.setBlob(2, file);
+            stmt.execute();
+            return true;
+        } catch (SQLException | FileNotFoundException ex) {
+            Logger.getLogger(SaveImageController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
 }
