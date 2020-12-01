@@ -42,10 +42,14 @@
                                     <VBox alignment="CENTER" layoutX="425.0" layoutY="291.0" prefHeight="58.0" prefWidth="100.0" spacing="10.0" AnchorPane.bottomAnchor="176.0" AnchorPane.leftAnchor="425.0" AnchorPane.rightAnchor="423.0" AnchorPane.topAnchor="291.0">
                                        <children>
                                           <Text layoutX="-80.0" layoutY="23.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Upload only png, jpg or jpeg." />
-                                          <Button fx:id="btnOpenFileExplorer" alignment="CENTER" mnemonicParsing="false" prefHeight="35.0" prefWidth="100.0" text="Add Image" />
+                                          <Button fx:id="btnOpenFileExplorer" alignment="CENTER" mnemonicParsing="false" prefHeight="35.0" prefWidth="100.0" text="Save Image" />
                                        </children>
                                     </VBox>
-                                    <ProgressBar layoutX="374.0" layoutY="364.0" prefWidth="200.0" progress="0.0" />
+                                    <HBox alignment="CENTER" layoutX="375.0" layoutY="358.0" prefHeight="2.0" prefWidth="200.0" AnchorPane.bottomAnchor="149.0" AnchorPane.leftAnchor="375.0" AnchorPane.rightAnchor="373.0" AnchorPane.topAnchor="358.0">
+                                       <children>
+                                          <ProgressBar prefWidth="200.0" progress="0.0" />
+                                       </children>
+                                    </HBox>
                                  </children>
                               </AnchorPane>
                            </children>
