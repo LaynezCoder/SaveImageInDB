@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
@@ -37,6 +38,10 @@ public class SaveImageController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         tile.setPadding(new Insets(15, 15, 15, 15));
         tile.setHgap(15);
+        
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setFitToWidth(true);
         scrollPane.setContent(tile);
     }
 
@@ -47,7 +52,7 @@ public class SaveImageController implements Initializable {
 
     @FXML
     private void handleShowImages() {
-        showImages();
+       showImages();
     }
 
     private void openFileExplorer() {
@@ -60,12 +65,12 @@ public class SaveImageController implements Initializable {
         if (selectedImage != null) {
             boolean result = insertNewImage(selectedImage);
             if (result) {
-                System.out.println("Save Image");
+                showAlert(Alert.AlertType.INFORMATION, "Success, nice job.", "The file was successfully added.");
             } else {
-                System.err.println("FATAL ERROR");
+                showAlert(Alert.AlertType.ERROR, "Oops.", "Connection error to Mysql. Please check your connection.");
             }
         } else {
-            System.out.println("file is not valid!");
+            showAlert(Alert.AlertType.ERROR, "Oops.", "No file has been selected.");
         }
     }
 
@@ -110,6 +115,15 @@ public class SaveImageController implements Initializable {
             }
         } catch (SQLException ex) {
             Logger.getLogger(SaveImageController.class.getName()).log(Level.SEVERE, null, ex);
+            showAlert(Alert.AlertType.ERROR, "Oops.", "Connection error to Mysql. Please check your connection.");
         }
+    }
+    
+    private void showAlert(Alert.AlertType alertType, String header, String content) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(alertType.toString());
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 }
