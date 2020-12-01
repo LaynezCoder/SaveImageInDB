@@ -17,7 +17,7 @@ public class Main extends Application {
        try {
             Parent root = FXMLLoader.load(getClass().getResource("/com/laynezcoder/view/SaveImage.fxml"));
             Scene scene = new Scene(root);
-            primaryStage.initStyle(StageStyle.UNDECORATED);
+            primaryStage.initStyle(StageStyle.DECORATED);
             primaryStage.setScene(scene);
             primaryStage.show();
         } catch (IOException ex) {
