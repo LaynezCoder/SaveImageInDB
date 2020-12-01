@@ -48,7 +48,7 @@
                 </Tab>
                 <Tab text="Show Images">
                      <content>
-                        <ScrollPane prefHeight="551.0" prefWidth="1000.0" />
+                        <ScrollPane fx:id="scrollPane" prefHeight="551.0" prefWidth="1000.0" />
                      </content>
                 </Tab>
               </tabs>
