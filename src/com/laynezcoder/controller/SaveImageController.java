@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -13,6 +14,7 @@ import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -20,6 +22,9 @@ public class SaveImageController implements Initializable {
     
     @FXML
     private Button btnOpenFileExplorer;
+    
+    @FXML
+    private ScrollPane scrollPane;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -67,5 +72,17 @@ public class SaveImageController implements Initializable {
             Logger.getLogger(SaveImageController.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
+    }
+    
+    private void getImages() {
+        try {
+            String sql = "SELECT * FROM Images";
+            PreparedStatement stmt = DatabaseConnection.getInstance().getConnection().prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(SaveImageController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
