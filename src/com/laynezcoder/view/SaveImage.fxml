@@ -29,7 +29,7 @@
                                  <children>
                                     <HBox alignment="CENTER" layoutX="401.0" layoutY="144.0" prefHeight="92.0" prefWidth="79.0" AnchorPane.bottomAnchor="234.0" AnchorPane.leftAnchor="401.0" AnchorPane.rightAnchor="400.0" AnchorPane.topAnchor="144.0">
                                        <children>
-                                          <ImageView fitHeight="149.0" fitWidth="147.0" opacity="0.29" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fitHeight="149.0" fitWidth="147.0" onMouseClicked="#handleOpenFileExplorer" opacity="0.29" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@../media/media.png" />
                                              </image>
@@ -42,7 +42,7 @@
                                     <VBox alignment="CENTER" layoutX="425.0" layoutY="291.0" prefHeight="58.0" prefWidth="100.0" spacing="10.0" AnchorPane.bottomAnchor="176.0" AnchorPane.leftAnchor="425.0" AnchorPane.rightAnchor="423.0" AnchorPane.topAnchor="291.0">
                                        <children>
                                           <Text layoutX="-80.0" layoutY="23.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Upload only png, jpg or jpeg." />
-                                          <Button fx:id="btnOpenFileExplorer" alignment="CENTER" mnemonicParsing="false" prefHeight="35.0" prefWidth="100.0" text="Save Image" />
+                                          <Button fx:id="btnOpenFileExplorer" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#handleOpenFileExplorer" prefHeight="35.0" prefWidth="100.0" text="Load Image" />
                                        </children>
                                     </VBox>
                                     <HBox alignment="CENTER" layoutX="375.0" layoutY="364.0" prefHeight="2.0" prefWidth="200.0" AnchorPane.bottomAnchor="143.0" AnchorPane.leftAnchor="375.0" AnchorPane.rightAnchor="373.0" AnchorPane.topAnchor="364.0">
