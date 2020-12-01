@@ -46,7 +46,7 @@
                         </AnchorPane>
                   </content>
                 </Tab>
-                <Tab text="Show Images">
+                <Tab onSelectionChanged="#handleShowImages" text="Show Images">
                      <content>
                         <ScrollPane fx:id="scrollPane" prefHeight="551.0" prefWidth="1000.0" />
                      </content>
