@@ -172,10 +172,8 @@ public class SaveImageController implements Initializable {
             }
         });
 
-        iv.setOnMouseClicked(ev -> {
-            iv.setOnContextMenuRequested(e -> {
-                menu.show(iv, ev.getScreenX(), ev.getScreenY());
-            });
+        iv.setOnContextMenuRequested(ev -> {
+            menu.show(iv, ev.getScreenX(), ev.getScreenY());
         });
 
         tile.getChildren().addAll(root);
