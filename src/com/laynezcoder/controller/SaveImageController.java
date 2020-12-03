@@ -15,12 +15,18 @@ import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -38,6 +44,7 @@ public class SaveImageController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         tile.setPadding(new Insets(15, 15, 15, 15));
         tile.setHgap(15);
+        tile.setVgap(15);
 
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
@@ -97,22 +104,15 @@ public class SaveImageController implements Initializable {
         tile.getChildren().clear();
 
         try {
-            String sql = "SELECT image FROM Images";
+            String sql = "SELECT * FROM Images";
             PreparedStatement stmt = DatabaseConnection.getInstance().getConnection().prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                InputStream imageFile = rs.getBinaryStream(1);
+                InputStream imageFile = rs.getBinaryStream("image");
 
                 if (imageFile != null) {
                     Image image = new Image(imageFile, 200, 200, true, true);
-
-                    ImageView iv;
-                    iv = new ImageView(image);
-                    iv.setFitWidth(200);
-                    iv.setPreserveRatio(true);
-                    iv.setSmooth(true);
-                    iv.setCache(true);
-                    tile.getChildren().add(iv);
+                    createTile(image, rs.getInt("id"), rs.getString("nameImage"));
                 }
             }
         } catch (SQLException ex) {
@@ -127,5 +127,39 @@ public class SaveImageController implements Initializable {
         alert.setHeaderText(header);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    private void createTile(Image image, int id, String name) {
+        ImageView iv = new ImageView(image);
+        iv.setFitWidth(200);
+        iv.setPreserveRatio(true);
+        iv.setSmooth(true);
+        iv.setCache(true);
+
+        VBox root = new VBox();
+        root.setStyle("-fx-background-color: white");
+        root.setPrefSize(iv.getFitWidth(), iv.getFitHeight());
+        root.setPadding(new Insets(15, 15, 15, 15));
+        root.setAlignment(Pos.CENTER);
+        root.setSpacing(10);
+        root.getChildren().addAll(iv, new Label(id + ". " + name));
+
+        ContextMenu menu = new ContextMenu(new MenuItem("Delete"));
+        menu.setAutoHide(true);
+        menu.setAutoFix(true);
+        menu.setConsumeAutoHidingEvents(true);
+        menu.setHideOnEscape(true);
+        
+        menu.setOnAction(e -> {
+            
+        });
+
+        iv.setOnMouseClicked(a -> {
+            iv.setOnContextMenuRequested(i -> {
+                menu.show(iv, a.getScreenX(), a.getScreenY());
+            });
+        });
+
+        tile.getChildren().addAll(root);
     }
 }
