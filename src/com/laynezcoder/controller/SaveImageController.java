@@ -38,7 +38,7 @@ public class SaveImageController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         tile.setPadding(new Insets(15, 15, 15, 15));
         tile.setHgap(15);
-        
+
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setFitToWidth(true);
@@ -52,7 +52,7 @@ public class SaveImageController implements Initializable {
 
     @FXML
     private void handleShowImages() {
-       showImages();
+        showImages();
     }
 
     private void openFileExplorer() {
@@ -103,22 +103,24 @@ public class SaveImageController implements Initializable {
             while (rs.next()) {
                 InputStream imageFile = rs.getBinaryStream(1);
 
-                Image image = new Image(imageFile, 200, 200, true, true);
+                if (imageFile != null) {
+                    Image image = new Image(imageFile, 200, 200, true, true);
 
-                ImageView iv;
-                iv = new ImageView(image);
-                iv.setFitWidth(200);
-                iv.setPreserveRatio(true);
-                iv.setSmooth(true);
-                iv.setCache(true);
-                tile.getChildren().add(iv);
+                    ImageView iv;
+                    iv = new ImageView(image);
+                    iv.setFitWidth(200);
+                    iv.setPreserveRatio(true);
+                    iv.setSmooth(true);
+                    iv.setCache(true);
+                    tile.getChildren().add(iv);
+                }
             }
         } catch (SQLException ex) {
             Logger.getLogger(SaveImageController.class.getName()).log(Level.SEVERE, null, ex);
             showAlert(Alert.AlertType.ERROR, "Oops.", "Connection error to Mysql. Please check your connection.");
         }
     }
-    
+
     private void showAlert(Alert.AlertType alertType, String header, String content) {
         Alert alert = new Alert(alertType);
         alert.setTitle(alertType.toString());
