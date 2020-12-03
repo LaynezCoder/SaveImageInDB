@@ -24,7 +24,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -59,7 +58,7 @@ public class SaveImageController implements Initializable {
 
     @FXML
     private void handleShowImages() {
-        showImages();
+        loadImages();
     }
 
     private void openFileExplorer() {
@@ -100,7 +99,7 @@ public class SaveImageController implements Initializable {
         return false;
     }
 
-    private void showImages() {
+    private void loadImages() {
         tile.getChildren().clear();
 
         try {
@@ -129,6 +128,20 @@ public class SaveImageController implements Initializable {
         alert.showAndWait();
     }
 
+    private boolean deleteImage(int id) {
+        try {
+            String sql = "DELETE FROM Images WHERE id = ?";
+            PreparedStatement preparedStatement = DatabaseConnection.getInstance().getConnection().prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+            preparedStatement.execute();
+            loadImages();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(SaveImageController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
     private void createTile(Image image, int id, String name) {
         ImageView iv = new ImageView(image);
         iv.setFitWidth(200);
@@ -149,14 +162,19 @@ public class SaveImageController implements Initializable {
         menu.setAutoFix(true);
         menu.setConsumeAutoHidingEvents(true);
         menu.setHideOnEscape(true);
-        
-        menu.setOnAction(e -> {
-            
+
+        menu.setOnAction(ev -> {
+            boolean result = deleteImage(id);
+            if (result) {
+                showAlert(Alert.AlertType.INFORMATION, "Success, nice job.", "The file was successfully removed.");
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Oops.", "Connection error to Mysql. Please check your connection.");
+            }
         });
 
-        iv.setOnMouseClicked(a -> {
-            iv.setOnContextMenuRequested(i -> {
-                menu.show(iv, a.getScreenX(), a.getScreenY());
+        iv.setOnMouseClicked(ev -> {
+            iv.setOnContextMenuRequested(e -> {
+                menu.show(iv, ev.getScreenX(), ev.getScreenY());
             });
         });
 
