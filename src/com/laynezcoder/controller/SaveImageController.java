@@ -32,6 +32,10 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+/**
+ *
+ * @author LaynezCoder
+ */
 public class SaveImageController implements Initializable {
 
     private static final long LIMIT = 419430;
