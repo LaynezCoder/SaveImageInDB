@@ -34,7 +34,7 @@ import javafx.stage.Stage;
 
 public class SaveImageController implements Initializable {
 
-    private static final int LIMIT = 419430;
+    private static final long LIMIT = 419430;
 
     @FXML
     private Button btnOpenFileExplorer;
@@ -74,10 +74,10 @@ public class SaveImageController implements Initializable {
 
         File selectedImage = fileChooser.showOpenDialog(getStage());
         if (selectedImage != null) {
-            int imgLength = (int) selectedImage.length();
-            System.err.println(imgLength);
+            long imgLength = selectedImage.length();
             if (imgLength > LIMIT) {
-                showAlert(Alert.AlertType.ERROR, "Oops.", "EXCEDED");
+                showAlert(Alert.AlertType.ERROR, "Oops.", "This image exceeds the weight limit to save. "
+                        + "Select another image.\n" + imgLength + " bytes > " + LIMIT + " bytes");
             } else {
                 boolean result = insertNewImage(selectedImage);
                 if (result) {
@@ -189,8 +189,6 @@ public class SaveImageController implements Initializable {
 
         iv.setOnMouseClicked(ev -> {
             if (ev.getButton().equals(MouseButton.PRIMARY) && ev.getClickCount() == 2) {
-                AnchorPane anchorPane = new AnchorPane();
-
                 ImageView imageView = new ImageView(getImage(id));
                 imageView.setPreserveRatio(true);
                 imageView.setSmooth(true);
@@ -212,7 +210,7 @@ public class SaveImageController implements Initializable {
                     stage.setHeight(600);
                     stage.setWidth(1000);
                 } else {
-
+                    AnchorPane anchorPane = new AnchorPane();
                     anchorPane.getChildren().add(imageView);
 
                     Scene scene = new Scene(anchorPane);
