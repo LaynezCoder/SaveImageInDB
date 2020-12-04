@@ -193,36 +193,34 @@ public class SaveImageController implements Initializable {
 
         iv.setOnMouseClicked(ev -> {
             if (ev.getButton().equals(MouseButton.PRIMARY) && ev.getClickCount() == 2) {
+                Stage stage = new Stage();
+                stage.setTitle(name);
+                
                 ImageView imageView = new ImageView(getImage(id));
                 imageView.setPreserveRatio(true);
                 imageView.setSmooth(true);
                 imageView.setCache(true);
+                
+                AnchorPane anchorPane = new AnchorPane();
+                anchorPane.getChildren().add(imageView);
 
                 Double height = getImage(id).getHeight();
-                Double width = getImage(id).getWidth();
+                Double witdh = getImage(id).getWidth();
 
-                Stage stage = new Stage();
-
-                if (height > 1000 && width > 600) {
-                    ScrollPane scroll = new ScrollPane();
-                    scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-                    scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-                    scroll.setContent(imageView);
-
-                    Scene scene = new Scene(scroll);
-                    stage.setScene(scene);
-                    stage.setHeight(600);
-                    stage.setWidth(1000);
-                } else {
-                    AnchorPane anchorPane = new AnchorPane();
-                    anchorPane.getChildren().add(imageView);
+                if (height > 1000 && witdh > 600) {
+                    imageView.setFitHeight(height / 2);
+                    imageView.setFitWidth(witdh / 2);
 
                     Scene scene = new Scene(anchorPane);
                     stage.setScene(scene);
-                    stage.setWidth(width);
+                    stage.setHeight(imageView.getFitHeight());
+                    stage.setWidth(imageView.getFitWidth());
+                } else {               
+                    Scene scene = new Scene(anchorPane);
+                    stage.setScene(scene);
+                    stage.setWidth(witdh);
                     stage.setHeight(height);
                 }
-                stage.setTitle(name);
                 stage.show();
             }
         });
