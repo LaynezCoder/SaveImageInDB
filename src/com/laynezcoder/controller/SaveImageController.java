@@ -16,6 +16,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
@@ -24,12 +25,16 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 public class SaveImageController implements Initializable {
+
+    private static final int LIMIT = 419430;
 
     @FXML
     private Button btnOpenFileExplorer;
@@ -45,7 +50,7 @@ public class SaveImageController implements Initializable {
         tile.setHgap(15);
         tile.setVgap(15);
 
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setFitToWidth(true);
         scrollPane.setContent(tile);
@@ -69,11 +74,17 @@ public class SaveImageController implements Initializable {
 
         File selectedImage = fileChooser.showOpenDialog(getStage());
         if (selectedImage != null) {
-            boolean result = insertNewImage(selectedImage);
-            if (result) {
-                showAlert(Alert.AlertType.INFORMATION, "Success, nice job.", "The file was successfully added.");
+            int imgLength = (int) selectedImage.length();
+            System.err.println(imgLength);
+            if (imgLength > LIMIT) {
+                showAlert(Alert.AlertType.ERROR, "Oops.", "EXCEDED");
             } else {
-                showAlert(Alert.AlertType.ERROR, "Oops.", "Connection error to Mysql. Please check your connection.");
+                boolean result = insertNewImage(selectedImage);
+                if (result) {
+                    showAlert(Alert.AlertType.INFORMATION, "Success, nice job.", "The file was successfully added.");
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Oops.", "Connection error to Mysql. Please check your connection.");
+                }
             }
         } else {
             showAlert(Alert.AlertType.ERROR, "Oops.", "No file has been selected.");
@@ -144,7 +155,7 @@ public class SaveImageController implements Initializable {
 
     private void createTile(Image image, int id, String name) {
         ImageView iv = new ImageView(image);
-        iv.setFitWidth(200);
+        iv.setFitWidth(120);
         iv.setPreserveRatio(true);
         iv.setSmooth(true);
         iv.setCache(true);
@@ -176,6 +187,61 @@ public class SaveImageController implements Initializable {
             menu.show(iv, ev.getScreenX(), ev.getScreenY());
         });
 
+        iv.setOnMouseClicked(ev -> {
+            if (ev.getButton().equals(MouseButton.PRIMARY) && ev.getClickCount() == 2) {
+                AnchorPane anchorPane = new AnchorPane();
+
+                ImageView imageView = new ImageView(getImage(id));
+                imageView.setPreserveRatio(true);
+                imageView.setSmooth(true);
+                imageView.setCache(true);
+
+                Double height = getImage(id).getHeight();
+                Double width = getImage(id).getWidth();
+
+                Stage stage = new Stage();
+
+                if (height > 1000 && width > 600) {
+                    ScrollPane scroll = new ScrollPane();
+                    scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+                    scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+                    scroll.setContent(imageView);
+
+                    Scene scene = new Scene(scroll);
+                    stage.setScene(scene);
+                    stage.setHeight(600);
+                    stage.setWidth(1000);
+                } else {
+
+                    anchorPane.getChildren().add(imageView);
+
+                    Scene scene = new Scene(anchorPane);
+                    stage.setScene(scene);
+                    stage.setWidth(width);
+                    stage.setHeight(height);
+                }
+                stage.setTitle(name);
+                stage.show();
+            }
+        });
+
         tile.getChildren().addAll(root);
+    }
+
+    private Image getImage(int id) {
+        Image image = null;
+        try {
+            String sql = "SELECT image FROM Images WHERE id = ?";
+            PreparedStatement preparedStatement = DatabaseConnection.getInstance().getConnection().prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                InputStream imageFile = rs.getBinaryStream("image");
+                image = new Image(imageFile);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(SaveImageController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return image;
     }
 }
