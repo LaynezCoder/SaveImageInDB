@@ -61,8 +61,8 @@ public class SaveImageController implements Initializable {
     }
 
     @FXML
-    private void handleOpenFileExplorer() {
-        openFileExplorer();
+    private void handleAddNewImage() {
+      
     }
 
     @FXML
@@ -70,29 +70,14 @@ public class SaveImageController implements Initializable {
         loadImages();
     }
 
-    private void openFileExplorer() {
+    private File getFileSelected() {
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extFilterJPG = new FileChooser.ExtensionFilter("JPG files (*.jpg)", "*.JPG");
         FileChooser.ExtensionFilter extFilterPNG = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.PNG");
         fileChooser.getExtensionFilters().addAll(extFilterJPG, extFilterPNG);
 
         File selectedImage = fileChooser.showOpenDialog(getStage());
-        if (selectedImage != null) {
-            long imgLength = selectedImage.length();
-            if (imgLength > LIMIT) {
-                showAlert(Alert.AlertType.ERROR, "Oops.", "This image exceeds the weight limit to save. "
-                        + "Select another image.\n" + imgLength + " bytes > " + LIMIT + " bytes");
-            } else {
-                boolean result = insertNewImage(selectedImage);
-                if (result) {
-                    showAlert(Alert.AlertType.INFORMATION, "Success, nice job.", "The file was successfully added.");
-                } else {
-                    showAlert(Alert.AlertType.ERROR, "Oops.", "Connection error to Mysql. Please check your connection.");
-                }
-            }
-        } else {
-            showAlert(Alert.AlertType.ERROR, "Oops.", "No file has been selected.");
-        }
+        return selectedImage;
     }
 
     private Stage getStage() {
@@ -171,7 +156,7 @@ public class SaveImageController implements Initializable {
         root.setAlignment(Pos.CENTER);
         root.setSpacing(10);
         root.getChildren().addAll(iv, new Label(id + ". " + name));
-        
+
         MenuItem delete = new MenuItem();
         MenuItem update = new MenuItem();
 
@@ -198,12 +183,12 @@ public class SaveImageController implements Initializable {
             if (ev.getButton().equals(MouseButton.PRIMARY) && ev.getClickCount() == 2) {
                 Stage stage = new Stage();
                 stage.setTitle(name);
-                
+
                 ImageView imageView = new ImageView(getImage(id));
                 imageView.setPreserveRatio(true);
                 imageView.setSmooth(true);
                 imageView.setCache(true);
-                
+
                 AnchorPane anchorPane = new AnchorPane();
                 anchorPane.getChildren().add(imageView);
 
@@ -218,7 +203,7 @@ public class SaveImageController implements Initializable {
                     stage.setScene(scene);
                     stage.setHeight(imageView.getFitHeight());
                     stage.setWidth(imageView.getFitWidth());
-                } else {               
+                } else {
                     Scene scene = new Scene(anchorPane);
                     stage.setScene(scene);
                     stage.setWidth(witdh);
