@@ -18,9 +18,9 @@ public class Main extends Application {
     
     @Override
     public void start(Stage primaryStage) {
-       try {
+        try {
             Parent root = FXMLLoader.load(getClass().getResource("/com/laynezcoder/view/SaveImage.fxml"));
-            Scene scene = new Scene(root);
+            Scene scene = new Scene(root, 1010, 600);
             primaryStage.initStyle(StageStyle.DECORATED);
             primaryStage.setScene(scene);
             primaryStage.show();
