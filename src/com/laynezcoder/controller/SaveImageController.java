@@ -171,14 +171,17 @@ public class SaveImageController implements Initializable {
         root.setAlignment(Pos.CENTER);
         root.setSpacing(10);
         root.getChildren().addAll(iv, new Label(id + ". " + name));
+        
+        MenuItem delete = new MenuItem();
+        MenuItem update = new MenuItem();
 
-        ContextMenu menu = new ContextMenu(new MenuItem("Delete"));
+        ContextMenu menu = new ContextMenu(delete, update);
         menu.setAutoHide(true);
         menu.setAutoFix(true);
         menu.setConsumeAutoHidingEvents(true);
         menu.setHideOnEscape(true);
 
-        menu.setOnAction(ev -> {
+        delete.setOnAction(ev -> {
             boolean result = deleteImage(id);
             if (result) {
                 showAlert(Alert.AlertType.INFORMATION, "Success, nice job.", "The file was successfully removed.");
