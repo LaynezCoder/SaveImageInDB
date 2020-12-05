@@ -62,7 +62,23 @@ public class SaveImageController implements Initializable {
 
     @FXML
     private void handleAddNewImage() {
-      
+        File imageSelected = getFileSelected();
+        if (imageSelected != null) {
+            long imgLength = imageSelected.length();
+            if (imgLength > LIMIT) {
+                showAlert(Alert.AlertType.ERROR, "Oops.", "This image exceeds the weight limit to save. "
+                        + "Select another image.\n" + imgLength + " bytes > " + LIMIT + " bytes");
+            } else {
+                boolean result = insertNewImage(imageSelected);
+                if (result) {
+                    showAlert(Alert.AlertType.INFORMATION, "Success, nice job.", "The file was successfully added.");
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Oops.", "Connection error to Mysql. Please check your connection.");
+                }
+            }
+        } else {
+            showAlert(Alert.AlertType.ERROR, "Oops.", "No file has been selected.");
+        }
     }
 
     @FXML
@@ -142,6 +158,43 @@ public class SaveImageController implements Initializable {
         return false;
     }
 
+    private boolean updateImage(int id, File imageSelected) {
+        try {
+            FileInputStream image = new FileInputStream(imageSelected);
+            String sql = "UPDATE Images SET nameImage = ?, image = ? WHERE id = ?";
+            PreparedStatement preparedStatement = DatabaseConnection.getInstance().getConnection().prepareStatement(sql);
+            preparedStatement.setString(1, imageSelected.getName());
+            preparedStatement.setBlob(2, image);
+            preparedStatement.setInt(3, id);
+            preparedStatement.execute();
+            loadImages();
+            return true;
+        } catch (SQLException | FileNotFoundException ex) {
+            Logger.getLogger(SaveImageController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    private void actionToUpdateImage(int id) {
+        File imageSelected = getFileSelected();
+        if (imageSelected != null) {
+            long imgLength = imageSelected.length();
+            if (imgLength > LIMIT) {
+                showAlert(Alert.AlertType.ERROR, "Oops.", "This image exceeds the weight limit to save. "
+                        + "Select another image.\n" + imgLength + " bytes > " + LIMIT + " bytes");
+            } else {
+                boolean result = updateImage(id, imageSelected);
+                if (result) {
+                    showAlert(Alert.AlertType.INFORMATION, "Success, nice job.", "The file was successfully updated.");
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Oops.", "Connection error to Mysql. Please check your connection.");
+                }
+            }
+        } else {
+            showAlert(Alert.AlertType.ERROR, "Oops.", "No file has been selected.");
+        }
+    }
+
     private void createTile(Image image, int id, String name) {
         ImageView iv = new ImageView(image);
         iv.setFitWidth(120);
@@ -157,8 +210,8 @@ public class SaveImageController implements Initializable {
         root.setSpacing(10);
         root.getChildren().addAll(iv, new Label(id + ". " + name));
 
-        MenuItem delete = new MenuItem();
-        MenuItem update = new MenuItem();
+        MenuItem delete = new MenuItem("Delete");
+        MenuItem update = new MenuItem("Update");
 
         ContextMenu menu = new ContextMenu(delete, update);
         menu.setAutoHide(true);
@@ -175,25 +228,30 @@ public class SaveImageController implements Initializable {
             }
         });
 
+        update.setOnAction(ev -> {
+            actionToUpdateImage(id);
+        });
+
         iv.setOnContextMenuRequested(ev -> {
             menu.show(iv, ev.getScreenX(), ev.getScreenY());
         });
 
         iv.setOnMouseClicked(ev -> {
             if (ev.getButton().equals(MouseButton.PRIMARY) && ev.getClickCount() == 2) {
+                Image img = getImage(id);
+                Double height = img.getHeight();
+                Double witdh = img.getWidth();
+
                 Stage stage = new Stage();
                 stage.setTitle(name);
 
-                ImageView imageView = new ImageView(getImage(id));
+                ImageView imageView = new ImageView(img);
                 imageView.setPreserveRatio(true);
                 imageView.setSmooth(true);
                 imageView.setCache(true);
 
                 AnchorPane anchorPane = new AnchorPane();
                 anchorPane.getChildren().add(imageView);
-
-                Double height = getImage(id).getHeight();
-                Double witdh = getImage(id).getWidth();
 
                 if (height > 1000 && witdh > 600) {
                     imageView.setFitHeight(height / 2);
