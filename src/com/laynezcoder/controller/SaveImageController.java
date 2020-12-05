@@ -1,9 +1,8 @@
 package com.laynezcoder.controller;
 
 import com.laynezcoder.database.DatabaseConnection;
+import com.laynezcoder.database.DatabaseHelper;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URL;
 import java.sql.PreparedStatement;
@@ -69,7 +68,7 @@ public class SaveImageController implements Initializable {
                 showAlert(Alert.AlertType.ERROR, "Oops.", "This image exceeds the weight limit to save. "
                         + "Select another image.\n" + imgLength + " bytes > " + LIMIT + " bytes");
             } else {
-                boolean result = insertNewImage(imageSelected);
+                boolean result = DatabaseHelper.insertNewImage(imageSelected);
                 if (result) {
                     showAlert(Alert.AlertType.INFORMATION, "Success, nice job.", "The file was successfully added.");
                 } else {
@@ -98,21 +97,6 @@ public class SaveImageController implements Initializable {
 
     private Stage getStage() {
         return (Stage) btnOpenFileExplorer.getScene().getWindow();
-    }
-
-    private boolean insertNewImage(File selectedImage) {
-        try {
-            FileInputStream image = new FileInputStream(selectedImage);
-            String sql = "INSERT INTO Images (nameImage, image) VALUES (?, ?)";
-            PreparedStatement stmt = DatabaseConnection.getInstance().getConnection().prepareStatement(sql);
-            stmt.setString(1, selectedImage.getName());
-            stmt.setBlob(2, image);
-            stmt.execute();
-            return true;
-        } catch (SQLException | FileNotFoundException ex) {
-            Logger.getLogger(SaveImageController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return false;
     }
 
     private void loadImages() {
@@ -144,37 +128,6 @@ public class SaveImageController implements Initializable {
         alert.showAndWait();
     }
 
-    private boolean deleteImage(int id) {
-        try {
-            String sql = "DELETE FROM Images WHERE id = ?";
-            PreparedStatement preparedStatement = DatabaseConnection.getInstance().getConnection().prepareStatement(sql);
-            preparedStatement.setInt(1, id);
-            preparedStatement.execute();
-            loadImages();
-            return true;
-        } catch (SQLException ex) {
-            Logger.getLogger(SaveImageController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return false;
-    }
-
-    private boolean updateImage(int id, File imageSelected) {
-        try {
-            FileInputStream image = new FileInputStream(imageSelected);
-            String sql = "UPDATE Images SET nameImage = ?, image = ? WHERE id = ?";
-            PreparedStatement preparedStatement = DatabaseConnection.getInstance().getConnection().prepareStatement(sql);
-            preparedStatement.setString(1, imageSelected.getName());
-            preparedStatement.setBlob(2, image);
-            preparedStatement.setInt(3, id);
-            preparedStatement.execute();
-            loadImages();
-            return true;
-        } catch (SQLException | FileNotFoundException ex) {
-            Logger.getLogger(SaveImageController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return false;
-    }
-
     private void actionToUpdateImage(int id) {
         File imageSelected = getFileSelected();
         if (imageSelected != null) {
@@ -183,8 +136,9 @@ public class SaveImageController implements Initializable {
                 showAlert(Alert.AlertType.ERROR, "Oops.", "This image exceeds the weight limit to save. "
                         + "Select another image.\n" + imgLength + " bytes > " + LIMIT + " bytes");
             } else {
-                boolean result = updateImage(id, imageSelected);
+                boolean result = DatabaseHelper.updateImage(id, imageSelected);
                 if (result) {
+                    loadImages();
                     showAlert(Alert.AlertType.INFORMATION, "Success, nice job.", "The file was successfully updated.");
                 } else {
                     showAlert(Alert.AlertType.ERROR, "Oops.", "Connection error to Mysql. Please check your connection.");
@@ -220,8 +174,9 @@ public class SaveImageController implements Initializable {
         menu.setHideOnEscape(true);
 
         delete.setOnAction(ev -> {
-            boolean result = deleteImage(id);
+            boolean result = DatabaseHelper.deleteImage(id);
             if (result) {
+                loadImages();
                 showAlert(Alert.AlertType.INFORMATION, "Success, nice job.", "The file was successfully removed.");
             } else {
                 showAlert(Alert.AlertType.ERROR, "Oops.", "Connection error to Mysql. Please check your connection.");
@@ -238,7 +193,7 @@ public class SaveImageController implements Initializable {
 
         iv.setOnMouseClicked(ev -> {
             if (ev.getButton().equals(MouseButton.PRIMARY) && ev.getClickCount() == 2) {
-                Image img = getImage(id);
+                Image img = DatabaseHelper.getImage(id);
                 Double height = img.getHeight();
                 Double witdh = img.getWidth();
 
@@ -272,22 +227,5 @@ public class SaveImageController implements Initializable {
         });
 
         tile.getChildren().addAll(root);
-    }
-
-    private Image getImage(int id) {
-        Image image = null;
-        try {
-            String sql = "SELECT image FROM Images WHERE id = ?";
-            PreparedStatement preparedStatement = DatabaseConnection.getInstance().getConnection().prepareStatement(sql);
-            preparedStatement.setInt(1, id);
-            ResultSet rs = preparedStatement.executeQuery();
-            while (rs.next()) {
-                InputStream imageFile = rs.getBinaryStream("image");
-                image = new Image(imageFile);
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(SaveImageController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return image;
     }
 }
