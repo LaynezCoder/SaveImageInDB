@@ -27,7 +27,7 @@
                                  <children>
                                     <VBox alignment="CENTER" layoutX="362.0" layoutY="146.0" prefHeight="234.0" prefWidth="225.0" spacing="10.0" AnchorPane.bottomAnchor="145.0" AnchorPane.leftAnchor="362.0" AnchorPane.rightAnchor="361.0" AnchorPane.topAnchor="146.0">
                                        <children>
-                                          <ImageView fitHeight="122.0" fitWidth="124.0" onMouseClicked="#handleOpenFileExplorer" opacity="0.29" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fitHeight="122.0" fitWidth="124.0" onMouseClicked="#handleAddNewImage" opacity="0.29" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@../media/media.png" />
                                              </image>
@@ -36,7 +36,7 @@
                                              </viewport>
                                           </ImageView>
                                           <Text layoutX="-80.0" layoutY="23.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Upload only png, jpg or jpeg." />
-                                          <Button fx:id="btnOpenFileExplorer" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#handleOpenFileExplorer" prefHeight="35.0" prefWidth="100.0" text="Load Image" />
+                                          <Button fx:id="btnOpenFileExplorer" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#handleAddNewImage" prefHeight="35.0" prefWidth="100.0" text="Load Image" />
                                           <ProgressBar prefWidth="200.0" progress="0.0" visible="false" />
                                        </children>
                                     </VBox>
