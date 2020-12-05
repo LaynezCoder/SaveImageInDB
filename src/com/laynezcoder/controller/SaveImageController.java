@@ -90,6 +90,7 @@ public class SaveImageController implements Initializable {
         FileChooser.ExtensionFilter extFilterJPG = new FileChooser.ExtensionFilter("JPG files (*.jpg)", "*.JPG");
         FileChooser.ExtensionFilter extFilterPNG = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.PNG");
         fileChooser.getExtensionFilters().addAll(extFilterJPG, extFilterPNG);
+        fileChooser.setTitle("Select an image");
 
         File selectedImage = fileChooser.showOpenDialog(getStage());
         return selectedImage;
