@@ -154,6 +154,7 @@ public class SaveImageController implements Initializable {
     private void createTile(Image image, int id, String name) {
         ImageView iv = new ImageView(image);
         iv.setFitWidth(120);
+        iv.setFitHeight(120);
         iv.setPreserveRatio(true);
         iv.setSmooth(true);
         iv.setCache(true);
