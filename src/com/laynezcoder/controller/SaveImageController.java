@@ -1,5 +1,6 @@
 package com.laynezcoder.controller;
 
+import com.jfoenix.controls.JFXMasonryPane;
 import com.laynezcoder.database.DatabaseConnection;
 import com.laynezcoder.database.DatabaseHelper;
 import java.io.File;
@@ -45,18 +46,18 @@ public class SaveImageController implements Initializable {
     @FXML
     private ScrollPane scrollPane;
 
-    private final TilePane tile = new TilePane();
+    private final JFXMasonryPane mansoryPane = new JFXMasonryPane();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        tile.setPadding(new Insets(15, 15, 15, 15));
-        tile.setHgap(15);
-        tile.setVgap(15);
+        mansoryPane.setPadding(new Insets(15, 15, 15, 15));
+        mansoryPane.setVSpacing(15);
+        mansoryPane.setHSpacing(15);
 
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setFitToWidth(true);
-        scrollPane.setContent(tile);
+        scrollPane.setContent(mansoryPane);
     }
 
     @FXML
@@ -101,7 +102,7 @@ public class SaveImageController implements Initializable {
     }
 
     private void loadImages() {
-        tile.getChildren().clear();
+        mansoryPane.getChildren().clear();
 
         try {
             String sql = "SELECT * FROM Images";
@@ -227,6 +228,6 @@ public class SaveImageController implements Initializable {
             }
         });
 
-        tile.getChildren().addAll(root);
+        mansoryPane.getChildren().addAll(root);
     }
 }
