@@ -20,7 +20,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/com/laynezcoder/view/SaveImage.fxml"));
-            Scene scene = new Scene(root, 1020, 600); 
+            Scene scene = new Scene(root, 1040, 600); 
             primaryStage.initStyle(StageStyle.DECORATED);
             primaryStage.setScene(scene);
             primaryStage.setTitle("Save image in DB");
